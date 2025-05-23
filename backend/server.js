@@ -27,6 +27,15 @@ app.post('/testdb', (req, res) => {
 
   const sql = "insert into login (Username,Password,Email) values (?,?,?)";
 
+  const check = "SELECT * FROM login WHERE Email =?";
+
+  db.query(check,[req.body.email],(err,data) => {
+    if(err) ;
+    else{
+        return("That user already exists.");
+    }
+  })
+
   
   db.query(sql,[req.body.name,req.body.Password,req.body.email],(err,data) => {
     if(err) return console.log("THE DATA FAILED TO SAVE: ",err);
@@ -34,6 +43,25 @@ app.post('/testdb', (req, res) => {
   })
 
 });
+
+app.get('/check/:email',(req,res) => {
+
+    const email = req.params.email
+
+
+    if(email != null){
+        db.query('select * from login where Email=\'' + email + '\'',(err,results) =>{
+        if(err){
+            return false;
+        }
+        if(results != null){
+            return true;
+           
+        }
+        return res.json("wow")
+     });
+    }
+})
 
 
 app.get('/fetch/:email/:Password',(req,res)=>{
